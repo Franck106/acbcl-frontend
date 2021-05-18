@@ -1,10 +1,16 @@
 import React from "react";
 import { makeStyles, Theme } from "@material-ui/core/styles";
+import { useSelector } from "react-redux";
+
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Link from "@material-ui/core/Link";
 
 import { Routes } from "../core/_enum/Routes";
+import AuthModal from "./auth-modal";
+import { IAppState } from "../core";
+import { IUserResponse } from "../core/_types/userResponse";
+import UserMenu from "./user-menu";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -22,6 +28,9 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 const Sidebar: React.FC = () => {
   const classes = useStyles();
+  const user = useSelector<IAppState, IUserResponse | undefined>(
+    ({ user }) => user.user
+  );
 
   return (
     <div className={classes.root}>
@@ -39,6 +48,7 @@ const Sidebar: React.FC = () => {
           <Link href={Routes.ACTIVITIES} className={classes.menuLink}>
             ACTIVITES
           </Link>
+          {user ? <UserMenu user={user} /> : <AuthModal />}
         </Toolbar>
       </AppBar>
     </div>
