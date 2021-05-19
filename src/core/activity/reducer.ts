@@ -6,7 +6,7 @@ import { ActivityActions } from "./actions";
 
 export interface IActivityState {
   list: Record<string, IActivityResponse>;
-  status: string;
+  status: Status;
   error: string | null;
 }
 

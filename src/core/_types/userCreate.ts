@@ -1,10 +1,9 @@
-export interface IUser {
-    id: string;
+export interface IUserCreate {
     firstName: string;
     lastName: string;
     email: string;
+    password: string;
     birthDate: Date;
-    createdDate: Date;
     address: string;
     postCode: string;
     city: string;
