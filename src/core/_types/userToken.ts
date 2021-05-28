@@ -1,4 +1,4 @@
-import { IUserResponse } from './userResponse';
+import { IUserResponse } from "./userResponse";
 
 export interface IUserToken {
   token: string;

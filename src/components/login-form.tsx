@@ -13,13 +13,14 @@ import Avatar from "@material-ui/core/Avatar";
 import { makeStyles } from "@material-ui/core/styles";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import TextField from "@material-ui/core/TextField";
+
 import { ICredentials } from "../core/_types/credentials";
 import { postCredentials } from "../core/user/actions";
 import { IAppState } from "../core";
 
 interface LoginFormProps {
-    onChange: () => void;
-    onFinish: () => void;
+  onChange: () => void;
+  onFinish: () => void;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -50,11 +51,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onChange, onFinish }) => {
   const dispatch = useDispatch();
 
   const { handleSubmit, register } = useForm<ICredentials>();
-  const credentialsError = useSelector<IAppState, string | null>(({ user }) => user.error);
+  const credentialsError = useSelector<IAppState, string | null>(
+    ({ user }) => user.error
+  );
 
   const onLogin = handleSubmit((data) => {
-      dispatch(postCredentials(data));
-      onFinish();
+    dispatch(postCredentials(data));
+    onFinish();
   });
 
   return (
@@ -73,7 +76,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onChange, onFinish }) => {
             required
             fullWidth
             id="email"
-            label="Email Address"
+            label="Adresse mail"
             autoComplete="email"
             autoFocus
             {...register("login")}
@@ -83,7 +86,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onChange, onFinish }) => {
             margin="normal"
             required
             fullWidth
-            label="Password"
+            label="Mot de passe"
             type="password"
             id="password"
             autoComplete="current-password"
@@ -91,9 +94,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ onChange, onFinish }) => {
           />
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
+            label="Se souvenir de moi"
           />
-          {credentialsError ? <div className={classes.msg}>{credentialsError}</div> : null}
+          {credentialsError ? (
+            <div className={classes.msg}>{credentialsError}</div>
+          ) : null}
           <Button
             type="submit"
             fullWidth
@@ -111,7 +116,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onChange, onFinish }) => {
             </Grid>
             <Grid item>
               <Link href="#" onClick={onChange} variant="body2">
-                {"Don't have an account? Sign Up"}
+                {"Pas de compte? Créer un compte"}
               </Link>
             </Grid>
           </Grid>

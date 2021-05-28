@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
+
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
+
 import LoginForm from "./login-form";
 import { clearError } from "../core/user/actions";
 import SignUpForm from "./signup-form";
@@ -41,14 +43,14 @@ const AuthModal: React.FC = () => {
         <DialogTitle id="form-dialog-title">Bienvenue</DialogTitle>
         <DialogContent>
           {hasAccount ? (
-            <LoginForm onChange={switchForm} onFinish={handleClose}/>
+            <LoginForm onChange={switchForm} onFinish={handleClose} />
           ) : (
-            <SignUpForm onChange={switchForm} onFinish={handleClose}/>
+            <SignUpForm onChange={switchForm} onFinish={handleClose} />
           )}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
-            Cancel
+            annuler
           </Button>
         </DialogActions>
       </Dialog>

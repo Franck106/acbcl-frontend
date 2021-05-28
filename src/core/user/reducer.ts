@@ -1,9 +1,9 @@
-import { Reducer } from 'redux';
+import { Reducer } from "redux";
 
-import { Status } from '../_enum/Status';
-import { AppAction } from '../_types/action';
-import { IUserResponse } from '../_types/userResponse';
-import { UserActions } from './actions';
+import { Status } from "../_enum/Status";
+import { AppAction } from "../_types/action";
+import { IUserResponse } from "../_types/userResponse";
+import { UserActions } from "./actions";
 
 export interface IUserState {
   status: Status;
@@ -15,12 +15,12 @@ export interface IUserState {
 export const initialState: IUserState = {
   status: Status.IDLE,
   error: null,
-  token: '',
+  token: "",
 };
 
 export const userReducer: Reducer<IUserState, AppAction<UserActions>> = (
   state = initialState,
-  action,
+  action
 ) => {
   switch (action.type) {
     case UserActions.POST_CREDENTIALS_PENDING:
@@ -58,8 +58,8 @@ export const userReducer: Reducer<IUserState, AppAction<UserActions>> = (
     case UserActions.FETCH_USER_ERROR:
       return {
         status: Status.FAILED,
-        token: '',
-        error: action.payload,
+        token: "",
+        error: action.payload.message,
         isLoginOpen: true,
       };
     case UserActions.POST_USER_PENDING:
@@ -78,7 +78,7 @@ export const userReducer: Reducer<IUserState, AppAction<UserActions>> = (
       return {
         ...state,
         status: Status.FAILED,
-        error: action.payload,
+        error: action.payload.message,
       };
     case UserActions.USER_SIGNOUT:
       return initialState;
@@ -87,7 +87,7 @@ export const userReducer: Reducer<IUserState, AppAction<UserActions>> = (
         ...state,
         error: null,
         status: Status.IDLE,
-      }
+      };
     default:
       return state;
   }

@@ -1,4 +1,4 @@
-import { Action, ActionCreator } from 'redux';
+import { Action, ActionCreator } from "redux";
 
 export interface AppAction<A = any, P = any> extends Action<A> {
   payload?: P;
