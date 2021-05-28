@@ -1,4 +1,5 @@
 import React from "react";
+import { Redirect } from "react-router";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import "date-fns";
@@ -22,7 +23,6 @@ import { IUserCreate } from "../core/_types/userCreate";
 import { postUser } from "../core/user/actions";
 import { IAppState, Routes } from "../core";
 import { IUserResponse } from "../core/_types/userResponse";
-import { Redirect } from "react-router";
 
 interface SignupFormProps {
   onChange: () => void;
@@ -53,8 +53,9 @@ const SignUpForm: React.FC<SignupFormProps> = ({ onChange, onFinish }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const user = useSelector<IAppState, IUserResponse | undefined>(({ user }) => user.user);
-
+  const user = useSelector<IAppState, IUserResponse | undefined>(
+    ({ user }) => user.user
+  );
 
   const { handleSubmit, register, setValue } = useForm<IUserCreate>();
   const onSignup = handleSubmit((data) => {
@@ -75,10 +76,10 @@ const SignUpForm: React.FC<SignupFormProps> = ({ onChange, onFinish }) => {
     setSelectedDate(date);
   };
 
-  if(user) {
+  if (user) {
     onFinish();
-    return <Redirect to={Routes.HOME}/>
-}
+    return <Redirect to={Routes.HOME} />;
+  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -99,7 +100,7 @@ const SignUpForm: React.FC<SignupFormProps> = ({ onChange, onFinish }) => {
                 required
                 fullWidth
                 id="firstName"
-                label="First Name"
+                label="Prénom"
                 autoFocus
               />
             </Grid>
@@ -109,7 +110,7 @@ const SignUpForm: React.FC<SignupFormProps> = ({ onChange, onFinish }) => {
                 required
                 fullWidth
                 id="lastName"
-                label="Last Name"
+                label="Nom"
                 {...register("lastName")}
                 autoComplete="lname"
               />
@@ -181,7 +182,7 @@ const SignUpForm: React.FC<SignupFormProps> = ({ onChange, onFinish }) => {
                 required
                 fullWidth
                 id="email"
-                label="Email Address"
+                label="Adresse mail"
                 {...register("email")}
                 autoComplete="email"
               />
@@ -192,7 +193,7 @@ const SignUpForm: React.FC<SignupFormProps> = ({ onChange, onFinish }) => {
                 required
                 fullWidth
                 {...register("password")}
-                label="Password"
+                label="Mot de passe"
                 type="password"
                 id="password"
                 autoComplete="current-password"
@@ -211,7 +212,7 @@ const SignUpForm: React.FC<SignupFormProps> = ({ onChange, onFinish }) => {
           <Grid container justify="flex-end">
             <Grid item>
               <Link href="#" onClick={onChange} variant="body2">
-                Already have an account? Sign in
+                Déjà un compte? Login
               </Link>
             </Grid>
           </Grid>

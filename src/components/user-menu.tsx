@@ -1,12 +1,15 @@
 import React from "react";
+import { Link as RouterLink } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import IconButton from "@material-ui/core/IconButton";
 import AccountCircle from "@material-ui/icons/AccountCircle";
+
 import { IUserResponse } from "../core/_types/userResponse";
 import { userSignout } from "../core/user/actions";
+import { Routes } from "../core";
 
 interface UserMenuProps {
   user: IUserResponse;
@@ -48,9 +51,15 @@ const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem onClick={handleClose}>Gérer les activités</MenuItem>
+        <MenuItem
+          onClick={handleClose}
+          component={RouterLink}
+          to={Routes.ADMIN_ACTIVITY}
+        >
+          Gérer les activités
+        </MenuItem>
         <MenuItem onClick={handleClose}>Mon compte</MenuItem>
-        <MenuItem onClick={handleLogout}>Logout</MenuItem>
+        <MenuItem onClick={handleLogout}>Se déconnecter</MenuItem>
       </Menu>
     </div>
   );

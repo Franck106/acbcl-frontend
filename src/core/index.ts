@@ -49,11 +49,11 @@ export const configureStore = (
   );
 
   const rootEpic = combineEpics<
-    AppAction<any>, 
-    AppAction<any>, 
-    IAppState, 
+    AppAction<any>,
+    AppAction<any>,
+    IAppState,
     IAppDependencies
-    >(activityEpic, userEpic);
+  >(activityEpic, userEpic);
 
   epicMiddleware.run(rootEpic);
 
