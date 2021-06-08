@@ -5,6 +5,8 @@ import { catchError, map, switchMap, tap } from "rxjs/operators";
 import { IAppDependencies, IAppState } from "..";
 import { AppAction } from "../_types/action";
 import {
+  fetchAllUsersError,
+  fetchAllUsersSuccess,
   fetchUserError,
   fetchUserSuccess,
   postCredentialsError,
@@ -62,4 +64,12 @@ export const createUserEpic: UserEpic = (action$, state, { userApi }) =>
     })
   );
 
-export default combineEpics(userLoginEpic, getUserEpic, createUserEpic);
+export const userListEpic: UserEpic = (action$, state, { userApi }) =>
+    action$.pipe(
+      ofType(UserActions.FETCH_ALL_USERS_PENDING),
+      switchMap(() => userApi.getAllUsers()),
+      map(fetchAllUsersSuccess),
+      catchError(err => of(fetchAllUsersError(err)))
+    );
+
+export default combineEpics(userLoginEpic, getUserEpic, createUserEpic, userListEpic);

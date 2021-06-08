@@ -8,18 +8,14 @@ import {
   ActivityActions,
   createActivityError,
   createActivitySuccess,
-  createEventError,
-  createEventSuccess,
   deleteActivityError,
   deleteActivitySuccess,
   fetchActivitiesError,
   fetchActivitiesSuccess,
-  fetchEventsError,
-  fetchEventsSuccess,
-  sendSubscriptionGuestError,
-  sendSubscriptionGuestSuccess,
-  sendSubscriptionUserError,
-  sendSubscriptionUserSuccess,
+  fetchActivityByIdError,
+  fetchActivityByIdSuccess,
+  updateActivityError,
+  updateActivitySuccess,
 } from "./actions";
 
 export type ActivityEpic = Epic<
@@ -41,6 +37,14 @@ export const activityListEpic: ActivityEpic = (
     catchError((err) => of(fetchActivitiesError(err)))
   );
 
+export const activityEpic: ActivityEpic = (action$, state, { activityApi }) =>
+  action$.pipe(
+    ofType(ActivityActions.FETCH_ACTIVITY_ID_PENDING),
+    switchMap(({ payload }) => activityApi.getActivityById(payload)),
+    map(fetchActivityByIdSuccess),
+    catchError((err) => of(fetchActivityByIdError(err)))
+  );
+
 export const createActivityEpic: ActivityEpic = (
   action$,
   state,
@@ -51,6 +55,18 @@ export const createActivityEpic: ActivityEpic = (
     switchMap(({ payload }) => activityApi.addActivity(payload)),
     map(createActivitySuccess),
     catchError((err) => of(createActivityError(err)))
+  );
+
+export const updateActivityEpic: ActivityEpic = (
+  action$,
+  state,
+  { activityApi }
+) =>
+  action$.pipe(
+    ofType(ActivityActions.UPDATE_ACTIVITY_PENDING),
+    switchMap(({ payload }) => activityApi.updateActivity(payload)),
+    map(updateActivitySuccess),
+    catchError((err) => of(updateActivityError(err)))
   );
 
 export const deleteActivityEpic: ActivityEpic = (
@@ -65,56 +81,12 @@ export const deleteActivityEpic: ActivityEpic = (
     catchError((err) => of(deleteActivityError(err)))
   );
 
-export const createEventEpic: ActivityEpic = (
-  action$,
-  state,
-  { activityApi }
-) =>
-  action$.pipe(
-    ofType(ActivityActions.CREATE_EVENT_PENDING),
-    switchMap(({ payload }) => activityApi.createEvent(payload)),
-    map(createEventSuccess),
-    catchError((err) => of(createEventError(err)))
-  );
 
-export const eventListEpic: ActivityEpic = (action$, state, { activityApi }) =>
-  action$.pipe(
-    ofType(ActivityActions.FETCH_EVENTS_PENDING),
-    switchMap(() => activityApi.getComingEvents()),
-    map(fetchEventsSuccess),
-    catchError((err) => of(fetchEventsError(err)))
-  );
-
-export const subscriptionUserEpic: ActivityEpic = (
-  action$,
-  state,
-  { activityApi }
-) =>
-  action$.pipe(
-    ofType(ActivityActions.SEND_SUBSCRIPTION_USER_PENDING),
-    switchMap(({ payload }) => activityApi.applySubscriptionUser(payload)),
-    map(sendSubscriptionUserSuccess),
-    catchError((err) => of(sendSubscriptionUserError(err)))
-  );
-
-export const subscriptionGuestEpic: ActivityEpic = (
-  action$,
-  state,
-  { activityApi }
-) =>
-  action$.pipe(
-    ofType(ActivityActions.SEND_SUBSCRIPTION_GUEST_PENDING),
-    switchMap(({ payload }) => activityApi.applySubscriptionGuest(payload)),
-    map(sendSubscriptionGuestSuccess),
-    catchError((err) => of(sendSubscriptionGuestError(err)))
-  );
 
 export default combineEpics(
   activityListEpic,
+  activityEpic,
   createActivityEpic,
+  updateActivityEpic,
   deleteActivityEpic,
-  createEventEpic,
-  eventListEpic,
-  subscriptionUserEpic,
-  subscriptionGuestEpic
 );

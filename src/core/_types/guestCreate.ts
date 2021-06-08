@@ -1,10 +1,5 @@
-export interface IGuestCreate {
-  firstName: string;
-  lastName: string;
-  email: string;
-  birthDate: Date;
-  address: string;
-  postCode: string;
-  city: string;
-  phone: string;
+import { IPerson } from "./person";
+
+export interface IGuestCreate extends IPerson {
+  eventId: string;
 }

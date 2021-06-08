@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { format } from "date-fns";
+import { useDispatch } from "react-redux";
 import "date-fns";
 import DateFnsUtils from "@date-io/date-fns";
 import { useForm } from "react-hook-form";
@@ -13,20 +12,14 @@ import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from "@material-ui/pickers";
-import MenuItem from "@material-ui/core/MenuItem";
-import Select from "@material-ui/core/Select";
-import TableContainer from "@material-ui/core/TableContainer";
-import Table from "@material-ui/core/Table";
-import TableRow from "@material-ui/core/TableRow";
-import TableCell from "@material-ui/core/TableCell";
+import { createGuest, fetchEvents } from "../core/event/actions";
+import { IGuestCreate } from "../core/_types/guestCreate";
+import { IEventResponse } from "../core/_types/eventResponse";
 
-import { ISubscriptionGuest } from "../core/_types/subscription-guest";
-import {
-  fetchActivities,
-  sendSubscriptionGuest,
-} from "../core/activity/actions";
-import { IAppState } from "../core";
-import { IActivityResponse } from "../core/_types/activityResponse";
+interface GuestCreateFormProps {
+  event: IEventResponse;
+  onFinish: () => void;
+}
 
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
@@ -36,7 +29,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignItems: "center",
   },
   form: {
-    width: "100%", // Fix IE 11 issue.
     marginTop: theme.spacing(1),
   },
   submit: {
@@ -54,53 +46,32 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const ActivityGuestSubscribe: React.FC = () => {
+const GuestCreateForm: React.FC<GuestCreateFormProps> = ({
+  event,
+  onFinish,
+}) => {
   const classes = useStyles();
 
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(fetchActivities());
+    dispatch(fetchEvents());
+    setValue("eventId", event.id);
     // eslint-disable-next-line
-  }, []);
+  }, [dispatch]);
 
-  const activities = useSelector<IAppState, IActivityResponse[]>(
-    ({ activity }) =>
-      Object.values(activity.list).filter(
-        (act) => act.events && act.events.length > 0
-      )
-  );
-
-  const { handleSubmit, register, setValue } = useForm<ISubscriptionGuest>();
+  const { handleSubmit, register, setValue } = useForm<IGuestCreate>();
 
   const onSubmit = handleSubmit((data) => {
-    dispatch(sendSubscriptionGuest(data));
+    setValue("birthDate", selectedDate);
+    dispatch(createGuest(data));
+    onFinish();
   });
 
-  const [selectedDate, setSelectedDate] = React.useState<Date | null>(null);
+  const [selectedDate, setSelectedDate] = React.useState<Date>(new Date());
 
   const handleDateChange = (date: Date | null) => {
-    const defaultDate = date ? date : new Date();
-    setValue("guest.birthDate", defaultDate, {
-      shouldValidate: true,
-      shouldDirty: true,
-    });
-    setSelectedDate(date);
-  };
-
-  const [activityId, setActivityId] = React.useState("");
-  const selectedActivity = activities.filter((act) => act.id === activityId)[0];
-  const selectedActivityNextEvent =
-    selectedActivity && selectedActivity.events
-      ? format(new Date(selectedActivity.events[0].start), "dd/MM/yyyy HH:mm")
-      : null;
-
-  setValue("activity", selectedActivity, {
-    shouldValidate: true,
-    shouldDirty: true,
-  });
-
-  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setActivityId(event.target.value as string);
+    const defaulDate = date ? date : new Date();
+    setSelectedDate(defaulDate);
   };
 
   return (
@@ -110,7 +81,7 @@ const ActivityGuestSubscribe: React.FC = () => {
           <Grid item xs={12} md={6}>
             <TextField
               autoComplete="fname"
-              {...register("guest.firstName")}
+              {...register("firstName")}
               variant="outlined"
               required
               fullWidth
@@ -126,7 +97,7 @@ const ActivityGuestSubscribe: React.FC = () => {
               fullWidth
               id="lastName"
               label="Nom"
-              {...register("guest.lastName")}
+              {...register("lastName")}
               autoComplete="lname"
             />
           </Grid>
@@ -153,7 +124,7 @@ const ActivityGuestSubscribe: React.FC = () => {
               fullWidth
               id="address"
               label="Adresse"
-              {...register("guest.address")}
+              {...register("address")}
               autoComplete="address"
             />
           </Grid>
@@ -164,7 +135,7 @@ const ActivityGuestSubscribe: React.FC = () => {
               fullWidth
               id="postCode"
               label="Code Postal"
-              {...register("guest.postCode")}
+              {...register("postCode")}
               autoComplete="pcode"
             />
           </Grid>
@@ -175,7 +146,7 @@ const ActivityGuestSubscribe: React.FC = () => {
               fullWidth
               id="city"
               label="Ville"
-              {...register("guest.city")}
+              {...register("city")}
               autoComplete="city"
             />
           </Grid>
@@ -187,7 +158,7 @@ const ActivityGuestSubscribe: React.FC = () => {
               type="number"
               id="phone"
               label="N° de téléphone"
-              {...register("guest.phone")}
+              {...register("phone")}
               autoComplete="tel"
             />
           </Grid>
@@ -198,54 +169,10 @@ const ActivityGuestSubscribe: React.FC = () => {
               fullWidth
               id="email"
               label="Email"
-              {...register("guest.email")}
+              {...register("email")}
               autoComplete="email"
             />
           </Grid>
-          <Grid item xs={6}>
-            <Select
-              value={activityId}
-              onChange={handleChange}
-              fullWidth
-              displayEmpty
-              className={classes.selectEmpty}
-              inputProps={{ "aria-label": "Without label" }}
-            >
-              <MenuItem value="" disabled>
-                Sélectionner une activité
-              </MenuItem>
-              {activities.map((act) => (
-                <MenuItem key={act.id} value={act.id}>
-                  {act.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </Grid>
-          {selectedActivity && (
-            <Grid item xs={6}>
-              <TableContainer>
-                <Table>
-                  <TableRow>
-                    <TableCell component="th" scope="row">
-                      Prix :
-                    </TableCell>
-                    <TableCell>{selectedActivity.price}€</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell component="th" scope="row">
-                      Lieu :
-                    </TableCell>
-                    <TableCell>{selectedActivity.place}</TableCell>
-                  </TableRow>
-                  {selectedActivityNextEvent && (
-                    <TableRow>
-                      <TableCell>{selectedActivityNextEvent}</TableCell>
-                    </TableRow>
-                  )}
-                </Table>
-              </TableContainer>
-            </Grid>
-          )}
         </Grid>
         <Button
           type="submit"
@@ -261,4 +188,4 @@ const ActivityGuestSubscribe: React.FC = () => {
   );
 };
 
-export default ActivityGuestSubscribe;
+export default GuestCreateForm;

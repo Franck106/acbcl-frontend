@@ -11,23 +11,29 @@ import { activityReducer, IActivityState } from "./activity/reducer";
 import { userReducer, IUserState } from "./user/reducer";
 import ActivityApi from "./_api/activityApi";
 import UserApi from "./_api/userApi";
+import CalendarApi from "./_api/calendarApi";
 import activityEpic from "./activity/epic";
+import eventEpic from "./event/epic";
 import userEpic from "./user/epic";
 import { AppAction } from "./_types/action";
+import { eventReducer, IEventState } from "./event/reducer";
 
 export interface IAppState {
   activity: IActivityState;
   user: IUserState;
+  event: IEventState;
 }
 
 export interface IAppDependencies {
   activityApi: ActivityApi;
   userApi: UserApi;
+  calendarApi: CalendarApi;
 }
 
 export const rootReducer = combineReducers<IAppState>({
   activity: activityReducer,
   user: userReducer,
+  event: eventReducer,
 });
 
 export const configureStore = (
@@ -53,7 +59,7 @@ export const configureStore = (
     AppAction<any>,
     IAppState,
     IAppDependencies
-  >(activityEpic, userEpic);
+  >(activityEpic, userEpic, eventEpic);
 
   epicMiddleware.run(rootEpic);
 

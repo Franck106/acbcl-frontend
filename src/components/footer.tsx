@@ -23,26 +23,37 @@ const AppFooter: React.FC = () => {
   return (
     <Container className={classes.root}>
       <Grid container spacing={2}>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={3} >
           <Grid item xs={12}>
             <img
-              src="/images/new-log.png"
+              src="/images/new-logo.png"
               alt="logo"
               className={classes.image}
             />
           </Grid>
           <Grid item xs={12}>
-            35 Rue du 8 Mai 1945 69100 Villeurbanne
+            <p>Association Culturelle Buers et Croix Luizet ASSOCIATION LOI DE 1901</p>
+            <p>35 Rue du 8 Mai 1945 69100 Villeurbanne</p>
           </Grid>
         </Grid>
-        <Grid item xs={3}>
-          <Typography>col2</Typography>
+        <Grid item xs={4} sm={3}>
+          <Typography>ACBCL</Typography>
+          <p>Devenez benevoles</p>
+          <p>Partenariat</p>
+          <p>Qui sommes-nous</p>
+          <p>Faire un don</p>
         </Grid>
-        <Grid item xs={3}>
-          col3
+        <Grid item xs={4} sm={3}>
+        <Typography>Liens</Typography>
+        <p>Formations</p>
+        <p>Conférences</p>
+        <p>Activités</p>
+        <p>Accompagnement à la scolarité</p>
         </Grid>
-        <Grid item xs={3}>
-          col4
+        <Grid item xs={4} sm={3}>
+        <Typography>Contact</Typography>
+        <p>contact@acbcl.fr</p>
+        <p>Tél : 04 72 82 91 66</p>
         </Grid>
       </Grid>
     </Container>
