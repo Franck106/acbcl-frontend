@@ -1,13 +1,14 @@
-import { IActivityResponse } from "./activityResponse";
-
 export interface IEventResponse {
   id: string;
   start: Date;
   end: Date;
-  activityId?: string;
-  summary?: string;
+  isAllDay: boolean;
+  title?: string;
   location?: string;
   description?: string;
-  colorId?: number;
-  attendees?: { email: string }[];
+  activityId?: string;
+  subscriptionIds: string[];
+  userIds: string[];
+  guestIds: string[];
+  kidIds: string[];
 }

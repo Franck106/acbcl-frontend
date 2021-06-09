@@ -15,6 +15,9 @@ export enum UserActions {
   "POST_USER_ERROR" = "user/postUserError",
   "USER_SIGNOUT" = "user/userSignout",
   "CLEAR_ERROR" = "user/clearError",
+  "FETCH_ALL_USERS_PENDING" = "user/fetchAllUsersPending",
+  "FETCH_ALL_USERS_SUCCESS" = "user/fetchAllUsersSuccess",
+  "FETCH_ALL_USERS_ERROR" = "user/fetchAllUsersError",
 }
 
 export const postCredentials: AppActionCreator<UserActions, ICredentials> = (
@@ -83,4 +86,23 @@ export const userSignout: AppActionCreator<UserActions> = () => ({
 
 export const clearError: AppActionCreator<UserActions> = () => ({
   type: UserActions.CLEAR_ERROR,
+});
+
+export const fetchAllUsers: AppActionCreator<UserActions> = () => ({
+  type: UserActions.FETCH_ALL_USERS_PENDING,
+});
+
+export const fetchAllUsersSuccess: AppActionCreator<
+  UserActions,
+  IUserResponse[]
+> = (payload: IUserResponse[]) => ({
+  type: UserActions.FETCH_ALL_USERS_SUCCESS,
+  payload,
+});
+
+export const fetchAllUsersError: AppActionCreator<UserActions, Error> = (
+  payload: Error
+) => ({
+  type: UserActions.FETCH_ALL_USERS_ERROR,
+  payload,
 });

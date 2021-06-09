@@ -6,7 +6,10 @@ export interface IActivityResponse {
   name: string;
   price: number;
   place: string;
+  rangeStart: Date;
+  rangeEnd: Date;
   description?: string;
   photos: IPhoto[];
-  events?: IEventResponse[];
+  eventIds: string[];
+  subscriptionIds: string[];
 }

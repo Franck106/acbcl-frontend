@@ -7,6 +7,7 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Link from "@material-ui/core/Link";
 import { Grid } from "@material-ui/core";
+import HomeIcon from '@material-ui/icons/Home';
 
 import { Routes } from "../core/_enum/Routes";
 import AuthModal from "./auth-modal";
@@ -30,6 +31,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: 256,
     height: 100,
   },
+  account: {
+    textAlign: "right",
+  },
 }));
 
 const Sidebar: React.FC = () => {
@@ -51,27 +55,20 @@ const Sidebar: React.FC = () => {
               />
             </Link>
           </Grid>
-          <Grid item xs={10}>
+          <Grid item xs={8}>
             <Link
               component={RouterLink}
               to={Routes.HOME}
               className={classes.menuLink}
             >
-              ACCUEIL
+              <HomeIcon/>
             </Link>
             <Link
               component={RouterLink}
-              to={Routes.SUBSCRIPTION}
+              to={Routes.ABOUT}
               className={classes.menuLink}
             >
-              INSCRIPTIONS
-            </Link>
-            <Link
-              component={RouterLink}
-              to={Routes.ACTIVITIES}
-              className={classes.menuLink}
-            >
-              ACTIVITES
+              QUI SOMMES-NOUS
             </Link>
             <Link
               component={RouterLink}
@@ -81,7 +78,7 @@ const Sidebar: React.FC = () => {
               CALENDRIER
             </Link>
           </Grid>
-          <Grid item xs={2}>
+          <Grid item xs={4} className={classes.account}>
             {user ? <UserMenu user={user} /> : <AuthModal />}
           </Grid>
         </Grid>

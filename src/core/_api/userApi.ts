@@ -6,11 +6,12 @@ import { IUserCreate } from "../_types/userCreate";
 import { IUserResponse } from "../_types/userResponse";
 
 class UserApi {
-  private path = "auth";
+  private authPath = "auth";
+  private userPath = "user";
 
   public async login(credentials: ICredentials) {
     const res = await fetch(
-      `${process.env.REACT_APP_BASE_API}/${this.path}/login`,
+      `${process.env.REACT_APP_BASE_API}/${this.authPath}/login`,
       {
         method: "post",
         headers: {
@@ -32,7 +33,7 @@ class UserApi {
   public async getUserBytoken(): Promise<IUserResponse> {
     const token = localStorage.getItem("TOKEN");
     const res = await fetch(
-      `${process.env.REACT_APP_BASE_API}/${this.path}/me`,
+      `${process.env.REACT_APP_BASE_API}/${this.authPath}/me`,
       {
         method: "get",
         headers: {
@@ -52,7 +53,7 @@ class UserApi {
 
   public async createUser(user: IUserCreate) {
     const res = await fetch(
-      `${process.env.REACT_APP_BASE_API}/${this.path}/register`,
+      `${process.env.REACT_APP_BASE_API}/${this.authPath}/register`,
       {
         method: "post",
         headers: {
@@ -69,6 +70,16 @@ class UserApi {
       ? format(new Date(data.birthDate), "dd/MM/yyyy")
       : null;
     return data;
+  }
+
+  public async getAllUsers(): Promise<IUserResponse[]> {
+    const res = await fetch(
+      `${process.env.REACT_APP_BASE_API}/${this.userPath}`
+    );
+    if (res.status !== 200) {
+      throw new Error(Errors.GENERIC);
+    }
+    return res.json();
   }
 }
 

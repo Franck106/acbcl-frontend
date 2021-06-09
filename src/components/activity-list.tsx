@@ -1,59 +1,89 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import classNames from "classnames";
 
 import { Theme, makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
 import DeleteIcon from "@material-ui/icons/Delete";
+import EditIcon from "@material-ui/icons/Edit";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import IconButton from "@material-ui/core/IconButton";
 import EventIcon from "@material-ui/icons/Event";
 import Button from "@material-ui/core/Button";
+import { green } from "@material-ui/core/colors";
 import Dialog from "@material-ui/core/Dialog";
-import Avatar from "@material-ui/core/Avatar";
-import { DialogTitle } from "@material-ui/core";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
 
 import { IActivityResponse } from "../core/_types/activityResponse";
-import { deleteActivity } from "../core/activity/actions";
-import EventCreateForm from "./event-create";
+import { deleteActivity, fetchActivities } from "../core/activity/actions";
+import ActivityAddEditForm from "./activity-addEditForm";
 import { IAppState } from "../core";
-
-interface ActivityListProps {
-  activities: IActivityResponse[];
-}
+import { fetchSubscriptions } from "../core/event/actions";
+import ActivityListItem from "./activity-listItem";
+import SubscriptionListButton from "./subscription-listButton";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
     width: "100%",
-    maxWidth: 360,
     backgroundColor: theme.palette.background.paper,
+  },
+  scheduled: {
+    color: "#fff",
+    backgroundColor: green[500],
+  },
+  small: {
+    width: theme.spacing(3),
+    height: theme.spacing(3),
   },
 }));
 
-const ActivityList: React.FC<ActivityListProps> = ({ activities }) => {
+const ActivityList: React.FC = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const history = useHistory();
+
+  useEffect(() => {
+    dispatch(fetchActivities());
+    dispatch(fetchSubscriptions());
+    // eslint-disable-next-line
+  }, []);
+
+  const activities = useSelector<IAppState, IActivityResponse[]>(
+    ({ activity }) => Object.values(activity.list)
+  );
+
+  const hasEvents = (activity: IActivityResponse): boolean => {
+    if (activity.eventIds.length > 0) {
+      return true;
+    }
+    return false;
+  };
 
   const handleDelete = (e: any) => {
-    console.log(e.currentTarget.value);
     dispatch(deleteActivity(e.currentTarget.value));
   };
 
-  const [open, setOpen] = React.useState(false);
-  const [activityId, setActivityId] = React.useState("");
-  const selectedActivity = useSelector<IAppState, IActivityResponse>(
-    ({ activity }) => activity.list[activityId]
-  );
-
-  const handleClickOpen = (e: any) => {
-    setActivityId(e.currentTarget.value);
-    setOpen(true);
+  const handleSchedule = (e: any) => {
+    history.push("/admin/activity/" + e.currentTarget.value);
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  const [openEdit, setEditOpen] = useState(false);
+  const [activityEdit, setActivityEdit] = useState<IActivityResponse>();
+
+  const handleEdit = (e: any) => {
+    setActivityEdit(
+      activities.filter((act) => act.id === e.currentTarget.value)[0]
+    );
+    setEditOpen(true);
+  };
+
+  const handleEditClose = () => {
+    setEditOpen(false);
   };
 
   return (
@@ -61,32 +91,56 @@ const ActivityList: React.FC<ActivityListProps> = ({ activities }) => {
       <List>
         {activities.map((act) => (
           <ListItem key={act.id}>
+            <ActivityListItem activity={act} />
+            <SubscriptionListButton activity={act} />
             <ListItemAvatar>
-              <IconButton value={act.id} onClick={handleClickOpen}>
-                <EventIcon />
+              <IconButton value={act.id} onClick={handleEdit}>
+                <EditIcon />
               </IconButton>
             </ListItemAvatar>
             <ListItemAvatar>
-              <Avatar alt="photo" src={"/" + act.photos[0].url} />
+              <IconButton
+                value={act.id}
+                onClick={handleSchedule}
+                className={classNames({
+                  [classes.scheduled]: hasEvents(act),
+                })}
+              >
+                <EventIcon className={classes.small} />
+              </IconButton>
             </ListItemAvatar>
-            <ListItemText primary={act.name} secondary={act.place} />
-            <ListItemText primary={act.price + "€"} />
             <ListItemSecondaryAction>
-              <Button value={act.id} onClick={handleDelete}>
+              <IconButton
+                value={act.id}
+                onClick={handleDelete}
+                disabled={hasEvents(act)}
+                edge="end"
+                aria-label="delete"
+              >
                 <DeleteIcon />
-              </Button>
+              </IconButton>
             </ListItemSecondaryAction>
           </ListItem>
         ))}
       </List>
-      {selectedActivity && (
-        <Dialog onClose={handleClose} open={open}>
-          <DialogTitle>
-            Plannifier l'activité {selectedActivity.name}
-          </DialogTitle>
-          <EventCreateForm activity={selectedActivity} onFinish={handleClose} />
-        </Dialog>
-      )}
+      <Dialog
+        open={openEdit}
+        onClose={handleEditClose}
+        aria-labelledby="form-dialog-title"
+      >
+        <DialogTitle id="form-dialog-title">Modifier</DialogTitle>
+        <DialogContent>
+          <ActivityAddEditForm
+            activity={activityEdit}
+            onFinish={handleEditClose}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleEditClose} color="primary">
+            Annuler
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

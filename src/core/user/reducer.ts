@@ -10,12 +10,14 @@ export interface IUserState {
   error: string | null;
   token: string;
   user?: IUserResponse;
+  list: Record<string, IUserResponse>;
 }
 
 export const initialState: IUserState = {
   status: Status.IDLE,
   error: null,
   token: "",
+  list: {},
 };
 
 export const userReducer: Reducer<IUserState, AppAction<UserActions>> = (
@@ -61,6 +63,7 @@ export const userReducer: Reducer<IUserState, AppAction<UserActions>> = (
         token: "",
         error: action.payload.message,
         isLoginOpen: true,
+        list: state.list,
       };
     case UserActions.POST_USER_PENDING:
       return {
@@ -88,6 +91,30 @@ export const userReducer: Reducer<IUserState, AppAction<UserActions>> = (
         error: null,
         status: Status.IDLE,
       };
+
+    case UserActions.FETCH_ALL_USERS_PENDING:
+      return {
+        ...state,
+        status: Status.PENDING,
+      };
+    case UserActions.FETCH_ALL_USERS_SUCCESS:
+      return {
+        ...state,
+        status: Status.COMPLETED,
+        list: action.payload.reduce(
+          (acc: any, user: IUserResponse) => ({
+            ...acc,
+            [user.id]: user,
+          }),
+          {}
+        ),
+      };
+    case UserActions.FETCH_ALL_USERS_ERROR:
+      return {
+        ...state,
+        status: Status.FAILED,
+        error: action.payload.message,
+      }
     default:
       return state;
   }

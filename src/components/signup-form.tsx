@@ -59,7 +59,6 @@ const SignUpForm: React.FC<SignupFormProps> = ({ onChange, onFinish }) => {
 
   const { handleSubmit, register, setValue } = useForm<IUserCreate>();
   const onSignup = handleSubmit((data) => {
-    console.log(data);
     dispatch(postUser(data));
   });
 

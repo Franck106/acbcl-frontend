@@ -1,5 +1,5 @@
 import React from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, Redirect } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
 import Menu from "@material-ui/core/Menu";
@@ -31,7 +31,10 @@ const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
   const handleLogout = () => {
     localStorage.clear();
     dispatch(userSignout());
+    return <Redirect to={Routes.HOME}/>
   };
+
+  const userLabel = user.firstName.substring(0,1).toUpperCase();
 
   return (
     <div>
@@ -42,7 +45,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
         color="secondary"
       >
         <AccountCircle />
-        {user.firstName}
+        {userLabel}
       </IconButton>
       <Menu
         id="simple-menu"
